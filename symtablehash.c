@@ -168,6 +168,8 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
 
+
+   /* comparing Binder* to Binder* */
    for (psCurrentBind = oSymTable->ppsBindings[uHash]; 
    psCurrentBind != NULL; psCurrentBind = psCurrentBind->psNextBind)
    {
@@ -278,7 +280,6 @@ void SymTable_map(SymTable_T oSymTable,
     const void *pvExtra)
 {
    struct Binding* psCurrentBind;
-   struct Binding* psNextBind;
    size_t i;
 
    assert(oSymTable != NULL);
