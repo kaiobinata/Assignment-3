@@ -296,9 +296,10 @@ void SymTable_map(SymTable_T oSymTable,
        for (psCurrentBind = oSymTable->ppsBindings[i];
        psCurrentBind != NULL;
        psCurrentBind = psCurrentBind->psNextBind)
-       /* check if casts are necessary. */
-       (*pfApply)((const char*)psCurrentBind->pcKey, 
-       (void*)psCurrentBind->pvValue, (void*)pvExtra);
+       {
+           printf("debug %s\n", psCurrentBind->pcKey);
+           (*pfApply)((const char*)psCurrentBind->pcKey, 
+           (void*)psCurrentBind->pvValue, (void*)pvExtra);
+       }
    }
-
 }
