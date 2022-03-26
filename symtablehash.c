@@ -20,9 +20,9 @@ enum {FALSE, TRUE};
 
 struct Binding
 {
-    // Key is a string
+    /* Key is a string */
     char* pcKey;
-    // An Item's value is an arbitrary type of data
+    /* An Item's value is an arbitrary type of data */
     const void* pvValue;
     /* The address of the next Binding. */
     struct Binding* psNextBind;
@@ -297,5 +297,5 @@ void SymTable_map(SymTable_T oSymTable,
        (*pfApply)((const char*)psCurrentBind->pcKey, 
        (void*)psCurrentBind->pvValue, (void*)pvExtra);
    }
-   
+
 }
