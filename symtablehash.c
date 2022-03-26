@@ -30,7 +30,7 @@ struct Binding
 
 struct Library
 {
-       struct Binding* apBucket[];
+       struct Binding* apBucket[INIT_BUCKET_COUNT];
 };
 
 struct SymTable
