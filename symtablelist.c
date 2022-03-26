@@ -5,7 +5,7 @@
 
 #include "symtable.h"
 #include <stdlib.h>
-#include <stdio.h>
+#include <stddef.h>
 #include <string.h>
 #include <assert.h>
 
@@ -21,7 +21,7 @@ enum {FALSE, TRUE};
 struct Node
 {
     /* Key is a string */
-    const char* pcKey;
+    char* pcKey;
     /* An Item's value is an arbitrary type of data */
     const void* pvValue;
     /* The address of the next Node. */
@@ -92,7 +92,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
     const void *pvValue)
 {
    struct Node* psNewNode;
-   const char* pcNewKey;
+   char* pcNewKey;
 
    assert(oSymTable != NULL);
    assert(pcKey != NULL);
@@ -108,7 +108,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
    pcNewKey = (const char*)malloc(strlen(pcKey) * sizeof(char) + 1);
    if (pcNewKey == NULL)
       return FALSE;
-   strcpy(pcNewKey, pcKey)
+   strcpy(pcNewKey, pcKey);
 
    psNewNode->pcKey = pcNewKey;
    psNewNode->pvValue = pvValue;
@@ -182,7 +182,7 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
         psCurrentNode = psCurrentNode->psNextNode)
    {
       if (strcmp(psCurrentNode->pcKey, pcKey) == 0) 
-        return psCurrentNode->pvValue;
+        return (void*)psCurrentNode->pvValue;
    }
 
 return NULL;
@@ -221,7 +221,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
       }
       
       psPriorNode = psCurrentNode;
-      psCurrentNode = psCurrentNode->psNextNode
+      psCurrentNode = psCurrentNode->psNextNode;
    }
 
 return NULL;
