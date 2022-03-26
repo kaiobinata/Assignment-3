@@ -20,9 +20,9 @@ enum {FALSE, TRUE};
    form a list.  */
 struct Node
 {
-    // Key is a string
+    /* Key is a string */
     const char* pcKey;
-    // An Item's value is an arbitrary type of data
+    /* An Item's value is an arbitrary type of data */
     const void* pvValue;
     /* The address of the next Node. */
     struct Node* psNextNode;
@@ -96,7 +96,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
 
    assert(oSymTable != NULL);
    assert(pcKey != NULL);
-   // assert(pvValue != NULL);
+   /* assert(pvValue != NULL); */
 
    if (SymTable_contains(oSymTable, pcKey)) return FALSE;
    
@@ -104,7 +104,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
    if (psNewNode == NULL)
       return FALSE;
 
-   // check if +1 is necessary via strlen specifications.
+   /* check if +1 is necessary via strlen specifications. */
    pcNewKey = (const char*)malloc(strlen(pcKey) * sizeof(char) + 1);
    if (pcNewKey == NULL)
       return FALSE;
@@ -138,7 +138,7 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
       {
           pvOldValue = psCurrentNode->pvValue;
           psCurrentNode->pvValue = pvValue;
-          // check if const is giving errors.
+          /* check if const is giving errors. */
           return (void*)pvOldValue;
       }
    }
@@ -216,7 +216,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
           free(psCurrentNode->pcKey);
           free(psCurrentNode);
           oSymTable->uItemCount--;
-          // check if const is giving errors.
+          /* check if const is giving errors. */
           return (void*)pvValue;
       }
       
@@ -243,7 +243,7 @@ void SymTable_map(SymTable_T oSymTable,
    for (psCurrentNode = oSymTable->psFirstNode;
         psCurrentNode != NULL;
         psCurrentNode = psCurrentNode->psNextNode)
-    // check if casts are necessary.
+    /* check if casts are necessary. */
       (*pfApply)((const char*)psCurrentNode->pcKey, 
       (void*)psCurrentNode->pvValue, (void*)pvExtra);
 }
