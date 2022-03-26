@@ -160,7 +160,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
     const void *pvValue)
 {
-   struct Binder* psCurrentBind;
+   struct Binding* psCurrentBind;
    const void* pvOldValue;
    size_t uHash;
 
@@ -168,8 +168,6 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
 
-
-   /* comparing Binder* to Binder* */
    for (psCurrentBind = oSymTable->ppsBindings[uHash]; 
    psCurrentBind != NULL; psCurrentBind = psCurrentBind->psNextBind)
    {
@@ -190,7 +188,7 @@ return NULL;
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
 {
-   struct Binder* psCurrentBind;
+   struct Binding* psCurrentBind;
    size_t uHash;
 
    assert(oSymTable != NULL);
@@ -213,7 +211,7 @@ return FALSE;
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
 {
-   struct Binder* psCurrentBind;
+   struct Binding* psCurrentBind;
    size_t uHash;
 
    assert(oSymTable != NULL);
@@ -236,8 +234,8 @@ return NULL;
 
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
 {    
-   struct Binder* psCurrentBind;
-   struct Bind* psPriorBind;
+   struct Binding* psCurrentBind;
+   struct Binding* psPriorBind;
    const void* pvValue;
    size_t uHash;
 
