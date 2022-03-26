@@ -92,7 +92,7 @@ void SymTable_free(SymTable_T oSymTable)
    /* Does Initializing an array of Bindings make them all NULL? */
    for (i = 0; i < oSymTable->uBucketCount; i++)
    {
-      for (psCurrentBind = oSymTable->ppsBinding[i];
+      for (psCurrentBind = *(oSymTable->ppsBinding[i]);
       psCurrentBind != NULL;
       psCurrentBind = psNextBind)
       {        
@@ -148,8 +148,8 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
    psNewBind->pcKey = pcNewKey;
    psNewBind->pvValue = pvValue;
-   psNewBind->psNextBind = oSymTable->ppsBinding[uHash];
-   oSymTable->ppsBinding[uHash] = psNewBind;
+   psNewBind->psNextBind = *(oSymTable->ppsBinding[uHash]);
+   oSymTable->ppsBinding[uHash] = &psNewBind;
    return TRUE;
 }
 
@@ -167,7 +167,7 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
    assert(oSymTable != NULL);
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
-   for (psCurrentBind = oSymTable->ppsBinding[uHash];
+   for (psCurrentBind = *(oSymTable->ppsBinding[uHash]);
        psCurrentBind != NULL;
        psCurrentBind = psCurrentBind->psNextBind)
    {
@@ -194,7 +194,7 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
    assert(oSymTable != NULL);
 
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
-   for (psCurrentBind = oSymTable->ppsBinding[uHash];
+   for (psCurrentBind = *(oSymTable->ppsBinding[uHash]);
        psCurrentBind != NULL;
        psCurrentBind = psCurrentBind->psNextBind)
    {
@@ -217,7 +217,7 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
    assert(oSymTable != NULL);
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
-   for (psCurrentBind = oSymTable->ppsBinding[uHash];
+   for (psCurrentBind = *(oSymTable->ppsBinding[uHash]);
        psCurrentBind != NULL;
        psCurrentBind = psCurrentBind->psNextBind)
    {
@@ -242,7 +242,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
    assert(oSymTable != NULL);
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
-   psCurrentBind = oSymTable->ppsBinding[uHash];
+   psCurrentBind = *(oSymTable->ppsBinding[uHash]);
    while (psCurrentBind != NULL)
    {
        if (strcmp(psCurrentBind->pcKey, pcKey) == 0)
@@ -250,9 +250,8 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
           pvValue = psCurrentBind->pvValue;
 
           /* case 1: pcKey is in the First Binding */
-          if (psCurrentBind == oSymTable->ppsBinding[uHash])
-            oSymTable->ppsBinding->apBucket[uHash] = 
-            psCurrentBind->psNextBind;
+          if (psCurrentBind == *(oSymTable->ppsBinding[uHash]))
+            oSymTable->ppsBinding[uHash] = &(psCurrentBind->psNextBind);
           /* case 2: pcKey is in any other Bind */
           else psPriorBind->psNextBind = psCurrentBind->psNextBind;
           
@@ -288,7 +287,7 @@ void SymTable_map(SymTable_T oSymTable,
    /* Does Initializing an array of Bindings make them all NULL? */
    for (i = 0; i < oSymTable->uBucketCount; i++)
    {
-       for (psCurrentBind = oSymTable->ppsBinding[i];
+       for (psCurrentBind = *(oSymTable->ppsBinding[i]);
        psCurrentBind != NULL;
        psCurrentBind = psCurrentBind->psNextBind)
        /* check if casts are necessary. */
