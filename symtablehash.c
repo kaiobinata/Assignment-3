@@ -167,10 +167,9 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
    assert(oSymTable != NULL);
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
-   if (oSymTable->ppsBindings[uHash] == NULL) return NULL;
-   psCurrentBind = *(oSymTable->ppsBindings[uHash]);
-   
-   while (psCurrentBind != NULL)
+
+   for (psCurrentBind = (*oSymTable->ppsBindings)[uHash]; 
+   psCurrentBind != NULL; psCurrentBind = psCurrentBind->psNextBind)
    {
        if (strcmp(psCurrentBind->pcKey, pcKey) == 0)
        {
@@ -178,7 +177,6 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
        psCurrentBind->pvValue = pvValue;
        return (void*)pvOldValue;
        }
-       psCurrentBind = psCurrentBind->psNextBind;
    }
 
 return NULL;
