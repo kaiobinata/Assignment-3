@@ -7,6 +7,8 @@
 #ifndef SYMTABLE_INCLUDED
 #define SYMTABLE_INCLUDED
 
+#include <stddef.h>
+
 /*  A SymTable_T object is... */
 
 typedef struct SymTable* SymTable_T;
