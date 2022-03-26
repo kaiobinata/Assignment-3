@@ -12,7 +12,7 @@
 /*-------------------------------------------------------------------*/
 
 
-/* XX Each item is stored in a StackNode.  StackNodes are linked to
+/* Each key-value pair is stored in a Node.  Nodes are linked to
    form a list.  */
 
 struct Node
@@ -26,6 +26,8 @@ struct Node
 };
 
 /*-------------------------------------------------------------------*/
+
+/*  description */
 
 struct SymTable
 {
@@ -90,6 +92,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
     const void *pvValue)
 {
    struct Node* psNewNode;
+   const char* pcNewKey;
 
    assert(oSymTable != NULL);
    assert(pcKey != NULL);
@@ -101,7 +104,13 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
    if (psNewNode == NULL)
       return 0;
 
-   psNewNode->pcKey = pcKey;
+   // check if +1 is necessary via strlen specifications.
+   pcNewKey = (const char*)malloc(strlen(pcKey) * sizeof(char) + 1);
+   if (pcNewKey == NULL)
+      return 0;
+   strcpy(pcNewKey, pcKey)
+
+   psNewNode->pcKey = pcNewKey;
    psNewNode->pvValue = pvValue;
    psNewNode->psNextNode = oSymTable->psFirstNode;
    oSymTable->psFirstNode = psNewNode;
@@ -191,25 +200,22 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
     
    assert(oSymTable != NULL);
 
-   /* case 1: pcKey is in the FirstNode */
    psCurrentNode = oSymTable->psFirstNode;
-   if (strcmp(psCurrentNode->pcKey, pcKey) == 0) 
-   {
-          pvValue = psCurrentNode->pvValue;
-          oSymTable->psFirstNode = psCurrentNode->psNextNode;
-          free(psCurrentNode);
-          // check if const is giving errors.
-          return (void*)pvValue;
-   }
-
-   /* case 2: pcKey is in any other Node */
    while (psCurrentNode != NULL)
    {
       if (strcmp(psCurrentNode->pcKey, pcKey) == 0)
       {
           pvValue = psCurrentNode->pvValue;
-          psPriorNode->psNextNode = psCurrentNode->psNextNode;
+
+          /* case 1: pcKey is in the FirstNode */
+          if (psCurrentNode == oSymTable->psFirstNode)
+            oSymTable->psFirstNode = psCurrentNode->psNextNode;
+          /* case 2: pcKey is in any other Node */
+          else psPriorNode->psNextNode = psCurrentNode->psNextNode;
+          
+          free(psCurrentNode->pcKey);
           free(psCurrentNode);
+          oSymTable->uItemCount--;
           // check if const is giving errors.
           return (void*)pvValue;
       }
