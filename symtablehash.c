@@ -284,12 +284,12 @@ void SymTable_map(SymTable_T oSymTable,
    assert(oSymTable != NULL);
    assert(pfApply != NULL);
 
-   printf("debug A\n";
+   printf("debug A\n");
 
    /* Does Initializing an array of Bindings make them all NULL? */
    for (i = 0; i < oSymTable->uBucketCount; i++)
    {
-       printf("debug B\n";
+       printf("debug B\n");
 
        for (psCurrentBind = oSymTable->ppsBindings[i];
        psCurrentBind != NULL;
