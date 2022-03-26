@@ -240,7 +240,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
    size_t uHash;
 
    assert(oSymTable != NULL);
-   assert(pcKey != NULL)
+   assert(pcKey != NULL);
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
    psCurrentBind = oSymTable->ppsBindings[uHash];
