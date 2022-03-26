@@ -168,7 +168,7 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
    
    uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
 
-   for (psCurrentBind = (*oSymTable->ppsBindings)[uHash]; 
+   for (psCurrentBind = (*(oSymTable->ppsBindings))[uHash]; 
    psCurrentBind != NULL; psCurrentBind = psCurrentBind->psNextBind)
    {
        if (strcmp(psCurrentBind->pcKey, pcKey) == 0)
