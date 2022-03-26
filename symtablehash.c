@@ -9,6 +9,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include <stdio.h>
+
 /*-------------------------------------------------------------------*/
 
 enum { INIT_BUCKET_COUNT = 509 };
