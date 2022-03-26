@@ -105,7 +105,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
       return FALSE;
 
    /* check if +1 is necessary via strlen specifications. */
-   pcNewKey = (const char*)malloc(strlen(pcKey) * sizeof(char) + 1);
+   pcNewKey = (char*)malloc(strlen(pcKey) * sizeof(char) + 1);
    if (pcNewKey == NULL)
       return FALSE;
    strcpy(pcNewKey, pcKey);
