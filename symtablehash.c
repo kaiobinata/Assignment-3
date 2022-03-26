@@ -30,7 +30,8 @@ struct Binding
 
 struct Library
 {
-       struct Binding* apBucket[INIT_BUCKET_COUNT];
+       /* Review pointer notation, esp arrays of pointers */
+       struct Binding* (apBucket[INIT_BUCKET_COUNT]);
 };
 
 struct SymTable
@@ -44,17 +45,29 @@ struct SymTable
 
 /*  description */
 
+struct Library* Library_new(void)
+{
+  struct Library* oLibrary;
+
+  oLibrary = malloc(INIT_BUCKET_COUNT * sizeof(struct Binding));
+  return oLibrary;
+}
+
+/*-------------------------------------------------------------------*/
+
+/*  description */
+
 SymTable_T SymTable_new(void)
 {
   SymTable_T oSymTable;
+  struct Library* oLibrary;
 
   oSymTable = (SymTable_T)malloc(sizeof(struct SymTable));
    if (oSymTable == NULL)
       return NULL;
 
   /* Does Initializing an array of Bindings make them all NULL? */
-  oSymTable->psLibrary = 
-  (Library*)malloc(INIT_BUCKET_COUNT * sizeof(struct Binding));
+  oSymTable->psLibrary = oLibrary;
 
   oSymTable->uBucketCount = INIT_BUCKET_COUNT;
   oSymTable->uItemCount = 0;
@@ -87,13 +100,14 @@ static size_t SymTable_hash(const char *pcKey, size_t uBucketCount)
 
 void SymTable_free(SymTable_T oSymTable)
 {
-   struct Binding *psCurrentBind;
-   struct Binding *psNextBind;
+   struct Binding* psCurrentBind;
+   struct Binding* psNextBind;
+   size_t i;
 
    assert(oSymTable != NULL);
 
    /* Does Initializing an array of Bindings make them all NULL? */
-   for (size_t i = 0; i < oSymTable->uBucketCount; i++)
+   for (i = 0; i < oSymTable->uBucketCount; i++)
    {
       for (psCurrentBind = oSymTable->psLibrary[i];
       psCurrentBind != NULL;
@@ -281,14 +295,15 @@ void SymTable_map(SymTable_T oSymTable,
     void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
     const void *pvExtra)
 {
-   struct Binding *psCurrentBind;
-   struct Binding *psNextBind;
+   struct Binding* psCurrentBind;
+   struct Binding* psNextBind;
+   size_t i;
 
    assert(oSymTable != NULL);
    assert(pfApply != NULL);
 
    /* Does Initializing an array of Bindings make them all NULL? */
-   for (size_t i = 0; i < oSymTable->uBucketCount; i++)
+   for (i = 0; i < oSymTable->uBucketCount; i++)
    {
        for (psCurrentBind = oSymTable->psLibrary[i];
        psCurrentBind != NULL;
