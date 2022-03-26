@@ -173,7 +173,7 @@ return FALSE;
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
 {
-    struct Node* psCurrentNode;
+   struct Node* psCurrentNode;
     
    assert(oSymTable != NULL);
 

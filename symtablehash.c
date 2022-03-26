@@ -10,29 +10,57 @@
 
 /*-------------------------------------------------------------------*/
 
-enum { BUCKET_COUNT = 64 };
+enum {INIT_BUCKET_COUNT = 509};
+/* enum { 509, 1021, 2039, 4093, 8191, 16381, 32749, 65521 } */
+
+/* In lieu of a boolean data type. */
+enum {FALSE, TRUE};
+
+/*-------------------------------------------------------------------*/
 
 struct Binding
 {
     // Key is a string
-    const char* pcKey;
+    char* pcKey;
     // An Item's value is an arbitrary type of data
     const void* pvValue;
     /* The address of the next Binding. */
-    struct Binding* next;
+    struct Binding* psNextBind;
 };
 
 struct Library
 {
-       struct Binding* buckets[BUCKET_COUNT];
+       struct Binding* apBucket[];
 };
 
 struct SymTable
 {
-    struct Library* polibrary;
+    struct Library* psLibrary;
     size_t uBucketCount;
     size_t uItemCount;
 };
+
+/*-------------------------------------------------------------------*/
+
+/*  description */
+
+SymTable_T SymTable_new(void)
+{
+  SymTable_T oSymTable;
+
+  oSymTable = (SymTable_T)malloc(sizeof(struct SymTable));
+   if (oSymTable == NULL)
+      return NULL;
+
+  /* Does Initializing an array of Bindings make them all NULL? */
+  oSymTable->psLibrary = 
+  (Library*)malloc(INIT_BUCKET_COUNT * sizeof(struct Binding));
+
+  oSymTable->uBucketCount = INIT_BUCKET_COUNT;
+  oSymTable->uItemCount = 0;
+
+  return oSymTable;
+}
 
 /*-------------------------------------------------------------------*/
 
@@ -54,45 +82,30 @@ static size_t SymTable_hash(const char *pcKey, size_t uBucketCount)
 }
 
 /*-------------------------------------------------------------------*/
-/*-------------------------------------------------------------------*/
-/*-------------------------------------------------------------------*/
-
-/*  description */
-
-SymTable_T SymTable_new(void)
-{
-  SymTable_T oSymTable;
-  
-  oSymTable = (SymTable_T)malloc(sizeof(struct SymTable));
-   if (oSymTable == NULL)
-      return NULL;
-
-  oSymTable->pnFirstNode = NULL;
-  return oSymTable;
-}
-
-/*-------------------------------------------------------------------*/
 
 /*  description */
 
 void SymTable_free(SymTable_T oSymTable)
 {
-   /*
-   struct StackNode *psCurrentNode;
-   struct StackNode *psNextNode;
+   struct Binding *psCurrentBind;
+   struct Binding *psNextBind;
 
-   assert(oStack != NULL);
+   assert(oSymTable != NULL);
 
-   for (psCurrentNode = oStack->psFirstNode;
-        psCurrentNode != NULL;
-        psCurrentNode = psNextNode)
+   /* Does Initializing an array of Bindings make them all NULL? */
+   for (size_t i = 0; i < oSymTable->uBucketCount; i++)
    {
-      psNextNode = psCurrentNode->psNextNode;
-      free(psCurrentNode);
+      for (psCurrentBind = oSymTable->psLibrary[i];
+      psCurrentBind != NULL;
+      psCurrentBind = psNextBind)
+      {        
+             psNextBind = psCurrentBind->psNextBind;        
+             free(psCurrentBind);        
+      }
+
    }
 
-   free(oStack);
-   */
+   free(oSymTable);
 }
 
 /*-------------------------------------------------------------------*/
@@ -101,7 +114,8 @@ void SymTable_free(SymTable_T oSymTable)
 
 size_t SymTable_getLength(SymTable_T oSymTable)
 {
-    // code
+    assert(oSymTable != NULL);
+    return oSymTable->uBucketCount;
 }
 
 /*-------------------------------------------------------------------*/
@@ -111,20 +125,35 @@ size_t SymTable_getLength(SymTable_T oSymTable)
 int SymTable_put(SymTable_T oSymTable, const char *pcKey, 
     const void *pvValue)
 {
-   /* 
-   struct StackNode *psNewNode;
+   struct Binding* psNewBind;
+   char* pcNewKey;
+   size_t uHash;
 
-   assert(oStack != NULL);
+   assert(oSymTable != NULL);
+   assert(pcKey != NULL);
+   /* assert(pvValue != NULL); */
 
-   psNewNode = (struct StackNode*)malloc(sizeof(struct StackNode));
-   if (psNewNode == NULL)
-      return 0;
+   if (SymTable_contains(oSymTable, pcKey)) return FALSE;
+   
+   psNewBind = (struct Binding*)malloc(sizeof(struct Binding));
+   if (psNewBind == NULL)
+      return FALSE;
 
-   psNewNode->pvItem = pvItem;
-   psNewNode->psNextNode = oStack->psFirstNode;
-   oStack->psFirstNode = psNewNode;
-   return 1;
-   */
+   /* +1 is necessary via strlen specifications. */
+   pcNewKey = (char*)malloc(strlen(pcKey) * sizeof(char) + 1);
+   if (pcNewKey == NULL)
+      return FALSE;
+   strcpy(pcNewKey, pcKey);
+
+   oSymTable->uItemCount++;
+   /* Expansion if uItemCount > uBucketCount: Code here */
+
+   uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
+   psNewBind->pcKey = pcNewKey;
+   psNewBind->pvValue = pvValue;
+   psNewBind->psNextBind = oSymTable->psLibrary->apBucket[uHash];
+   oSymTable->psLibrary->apBucket[uHash] = psNewBind;
+   return TRUE;
 }
 
 /*-------------------------------------------------------------------*/
@@ -134,20 +163,26 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
 void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
     const void *pvValue)
 {
-   /*
-   // void *Stack_pop(Stack_T oStack)
-   const void *pvItem;
-   struct StackNode *psNextNode;
+   struct Binder* psCurrentBind;
+   const void* pvOldValue;
+   size_t uHash;
 
-   assert(oStack != NULL);
-   assert(oStack->psFirstNode != NULL);
+   assert(oSymTable != NULL);
+   
+   uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
+   for (psCurrentBind = oSymTable->psLibrary->apBucket[uHash];
+       psCurrentBind != NULL;
+       psCurrentBind = psCurrentBind->psNextBind)
+   {
+       if (strcmp(psCurrentBind->pcKey, pcKey) == 0)
+       {
+       pvOldValue = psCurrentBind->pvValue;
+       psCurrentBind->pvValue = pvValue;
+       return (void*)pvOldValue;
+       }
+   }
 
-   pvItem = oStack->psFirstNode->pvItem;
-   psNextNode = oStack->psFirstNode->psNextNode;
-   free(oStack->psFirstNode);
-   oStack->psFirstNode = psNextNode;
-   return (void*)pvItem;
-   */
+return NULL;
 }
 
 /*-------------------------------------------------------------------*/
@@ -156,20 +191,21 @@ void *SymTable_replace(SymTable_T oSymTable, const char *pcKey,
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
 {
-   /*
-   // void *Stack_pop(Stack_T oStack)
-   const void *pvItem;
-   struct StackNode *psNextNode;
+   struct Binder* psCurrentBind;
+   size_t uHash;
 
-   assert(oStack != NULL);
-   assert(oStack->psFirstNode != NULL);
+   assert(oSymTable != NULL);
 
-   pvItem = oStack->psFirstNode->pvItem;
-   psNextNode = oStack->psFirstNode->psNextNode;
-   free(oStack->psFirstNode);
-   oStack->psFirstNode = psNextNode;
-   return (void*)pvItem;
-   */
+   uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
+   for (psCurrentBind = oSymTable->psLibrary->apBucket[uHash];
+       psCurrentBind != NULL;
+       psCurrentBind = psCurrentBind->psNextBind)
+   {
+       if (strcmp(psCurrentBind->pcKey, pcKey) == 0) 
+       return TRUE;
+   }
+
+return FALSE;
 }
 
 /*-------------------------------------------------------------------*/
@@ -178,20 +214,21 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
 {
-   /*
-   // void *Stack_pop(Stack_T oStack)
-   const void *pvItem;
-   struct StackNode *psNextNode;
+   struct Binder* psCurrentBind;
+   size_t uHash;
 
-   assert(oStack != NULL);
-   assert(oStack->psFirstNode != NULL);
+   assert(oSymTable != NULL);
+   
+   uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
+   for (psCurrentBind = oSymTable->psLibrary->apBucket[uHash];
+       psCurrentBind != NULL;
+       psCurrentBind = psCurrentBind->psNextBind)
+   {
+       if (strcmp(psCurrentBind->pcKey, pcKey) == 0) 
+       return (void*)psCurrentBind->pvValue;
+   }
 
-   pvItem = oStack->psFirstNode->pvItem;
-   psNextNode = oStack->psFirstNode->psNextNode;
-   free(oStack->psFirstNode);
-   oStack->psFirstNode = psNextNode;
-   return (void*)pvItem;
-   */
+return NULL;
 }
 
 /*-------------------------------------------------------------------*/
@@ -199,21 +236,41 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
 /*  description */
 
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
-{
-   /*
-   // void *Stack_pop(Stack_T oStack)
-   const void *pvItem;
-   struct StackNode *psNextNode;
+{    
+   struct Binder* psCurrentBind;
+   struct Bind* psPriorBind;
+   const void* pvValue;
+   size_t uHash;
 
-   assert(oStack != NULL);
-   assert(oStack->psFirstNode != NULL);
+   assert(oSymTable != NULL);
+   
+   uHash = SymTable_hash(pcKey, oSymTable->uBucketCount);
+   psCurrentBind = oSymTable->psLibrary->apBucket[uHash];
+   while (psCurrentBind != NULL)
+   {
+       if (strcmp(psCurrentBind->pcKey, pcKey) == 0)
+       {
+          pvValue = psCurrentBind->pvValue;
 
-   pvItem = oStack->psFirstNode->pvItem;
-   psNextNode = oStack->psFirstNode->psNextNode;
-   free(oStack->psFirstNode);
-   oStack->psFirstNode = psNextNode;
-   return (void*)pvItem;
-   */
+          /* case 1: pcKey is in the First Binding */
+          if (psCurrentBind == oSymTable->psLibrary->apBucket[uHash])
+            oSymTable->psLibrary->apBucket[uHash] = 
+            psCurrentBind->psNextBind;
+          /* case 2: pcKey is in any other Bind */
+          else psPriorBind->psNextBind = psCurrentBind->psNextBind;
+          
+          free(psCurrentBind->pcKey);
+          free(psCurrentBind);
+          oSymTable->uItemCount--;
+          /* revisit const mismatch practice problems */
+          return (void*)pvValue;
+       }
+      
+       psPriorBind = psCurrentBind;
+       psCurrentBind = psCurrentBind->psNextBind;
+   }
+
+return NULL;
 }
 
 /*-------------------------------------------------------------------*/
@@ -224,15 +281,21 @@ void SymTable_map(SymTable_T oSymTable,
     void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
     const void *pvExtra)
 {
-    /*
-    struct StackNode *psCurrentNode;
+   struct Binding *psCurrentBind;
+   struct Binding *psNextBind;
 
-   assert(oStack != NULL);
+   assert(oSymTable != NULL);
    assert(pfApply != NULL);
 
-   for (psCurrentNode = oStack->psFirstNode;
-        psCurrentNode != NULL;
-        psCurrentNode = psCurrentNode->psNextNode)
-      (*pfApply)((void*)psCurrentNode->pvItem, (void*)pvExtra);
-      */
+   /* Does Initializing an array of Bindings make them all NULL? */
+   for (size_t i = 0; i < oSymTable->uBucketCount; i++)
+   {
+       for (psCurrentBind = oSymTable->psLibrary[i];
+       psCurrentBind != NULL;
+       psCurrentBind = psCurrentBind->psNextBind)
+       /* check if casts are necessary. */
+       (*pfApply)((const char*)psCurrentBind->pcKey, 
+       (void*)psCurrentBind->pvValue, (void*)pvExtra);
+   }
+   
 }
