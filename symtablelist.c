@@ -11,10 +11,13 @@
 
 /*-------------------------------------------------------------------*/
 
+/* In lieu of a boolean data type. */
+enum {FALSE, TRUE};
+
+/*-------------------------------------------------------------------*/
 
 /* Each key-value pair is stored in a Node.  Nodes are linked to
    form a list.  */
-
 struct Node
 {
     // Key is a string
@@ -25,10 +28,7 @@ struct Node
     struct Node* psNextNode;
 };
 
-/*-------------------------------------------------------------------*/
-
 /*  description */
-
 struct SymTable
 {
     struct Node* psFirstNode;
@@ -98,16 +98,16 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
    assert(pcKey != NULL);
    // assert(pvValue != NULL);
 
-   if (SymTable_contains(oSymTable, pcKey)) return 0;
+   if (SymTable_contains(oSymTable, pcKey)) return FALSE;
    
    psNewNode = (struct Node*)malloc(sizeof(struct Node));
    if (psNewNode == NULL)
-      return 0;
+      return FALSE;
 
    // check if +1 is necessary via strlen specifications.
    pcNewKey = (const char*)malloc(strlen(pcKey) * sizeof(char) + 1);
    if (pcNewKey == NULL)
-      return 0;
+      return FALSE;
    strcpy(pcNewKey, pcKey)
 
    psNewNode->pcKey = pcNewKey;
@@ -115,7 +115,7 @@ int SymTable_put(SymTable_T oSymTable, const char *pcKey,
    psNewNode->psNextNode = oSymTable->psFirstNode;
    oSymTable->psFirstNode = psNewNode;
    oSymTable->uItemCount++;
-   return 1;
+   return TRUE;
 }
 
 /*-------------------------------------------------------------------*/
@@ -161,10 +161,10 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
         psCurrentNode = psCurrentNode->psNextNode)
    {
       if (strcmp(psCurrentNode->pcKey, pcKey) == 0) 
-        return 1;
+        return TRUE;
    }
 
-return 0;
+return FALSE;
 }
 
 /*-------------------------------------------------------------------*/
