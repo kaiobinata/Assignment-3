@@ -13,5 +13,5 @@ testsymtable: testsymtable.o symtablehash.o
 	$(CC) testsymtable.o symtablehash.o –o testsymtable
 testsymtable.o: testsymtable.c symtable.h
 	$(CC) -c testsymtable.c
-symtablehash.o: symtablehash.c symtablehash.h
+symtablehash.o: symtablehash.c symtable.h
 	$(CC) -c symtablehash.c
