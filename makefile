@@ -10,7 +10,7 @@ clean:
   
 # Dependency rules for file targets
 testsymtable: testsymtable.o symtablehash.o
-	$(CC) testsymtable.o symtablehash.o –o testsymtable
+	$(CC) testsymtable.o symtablehash.o -o testsymtable
 testsymtable.o: testsymtable.c symtable.h
 	$(CC) -c testsymtable.c
 symtablehash.o: symtablehash.c symtable.h
