@@ -4,6 +4,8 @@ Assignment 3 readme File
 What is your name?
 
 
+Kai Obinata
+
 
 ------------------------------------------------------------------------
 What authorized sources of information did you use to complete the
@@ -12,6 +14,14 @@ in the "Policies" web page (also available on armlab in the file
 ~cos217/AuthorizedSourcesList ) to this section of the readme file,
 and edit it as appropriate.
 
+
+The course's lectures.
+The course's precepts.
+The course's website.
+Documents that are referenced directly by the course's website.
+The course's textbooks.
+The course's current staff members outside of class time through Ed.
+Current lab teaching assistants through visits to the course labs.
 
 
 ------------------------------------------------------------------------
@@ -27,10 +37,15 @@ to the Committee on Discipline. Write "None" if you used no
 unauthorized sources of information.
 
 
+N/A
+
 
 ------------------------------------------------------------------------
 What is your assessment of the assignment? Was it helpful? Was it fun?
 
+
+I think it is an engaging and fun assignment, but I didn't have the
+time or headspace to complete it fully and thus reap the benefits.
 
 
 ------------------------------------------------------------------------
@@ -38,6 +53,17 @@ What is your assessment of the assignment? Was it helpful? Was it fun?
 will help your grader to grade it in the most favorable light? In
 particular, what bugs are in your submission?
 
+
+I struggled with the data type implementation for hashtable, as you
+might see in my attempt and debugging code insertions printf().
+
+I went to tab TA hours twice, getting help maybe 5 times in total,
+but the advice I received eventually wasn't enough for me to implement
+hashtable. 
+
+Submitting this at 8:00PM before another late day penalty, this current
+code was the best that I was able to do, esp realizing that I had other 
+assignments in other classes that were drastically behind.
 
 
 ------------------------------------------------------------------------
@@ -47,6 +73,11 @@ disagreement after each warning. If there are no warnings, then write
 "None."
 
 
+symtablelist.c: (in function SymTable_remove)
+symtablelist.c:215:16: Variable psPriorNode used before definition
+  An rvalue is used that may not be initialized to a value on some execution
+  path. (Use -usedef to inhibit warning)
+
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on symtablelist.c, and what are your
@@ -55,6 +86,102 @@ your disagreement after each warning. If there are no warnings, then
 write "None."
 
 
+  symtable.h: line 1: high priority: 
+   A file should begin with a comment.
+
+   symtable.h: line 25: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 31: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 31: high priority: 
+   A function's comment should state explicitly what the function returns
+
+   symtable.h: line 37: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 37: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pcKey'
+
+   symtable.h: line 37: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pvValue'
+
+   symtable.h: line 37: high priority: 
+   A function's comment should state explicitly what the function returns
+
+   symtable.h: line 44: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 44: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pcKey'
+
+   symtable.h: line 44: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pvValue'
+
+   symtable.h: line 51: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 51: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pcKey'
+
+   symtable.h: line 51: high priority: 
+   A function's comment should state explicitly what the function returns
+
+   symtable.h: line 57: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 57: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pcKey'
+
+   symtable.h: line 63: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtable.h: line 63: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'pcKey'
+
+   symtable.h: line 69: high priority: 
+   A function's comment should refer to each parameter by name;
+   your comment does not refer to 'oSymTable'
+
+   symtablelist.c: line 93: medium priority:
+   Do you want to validate 'pvValue' through an assert?
+
+   symtablelist.c: line 127: medium priority:
+   Do you want to validate 'pcKey' through an assert?
+
+   symtablelist.c: line 127: medium priority:
+   Do you want to validate 'pvValue' through an assert?
+
+   symtablelist.c: line 154: medium priority:
+   Do you want to validate 'pcKey' through an assert?
+
+   symtablelist.c: line 175: medium priority:
+   Do you want to validate 'pcKey' through an assert?
+
+   symtablelist.c: line 238: medium priority:
+   Do you want to validate 'pvExtra' through an assert?
+
+   symtablelist.c: line 34: medium priority:
+   A comment should appear above each field in a struct.
+
+   symtablelist.c: line 35: medium priority:
+   A comment should appear above each field in a struct.
+
 
 ------------------------------------------------------------------------
 What warnings does splint generate on symtablehash.c, and what are your
@@ -62,7 +189,7 @@ disagreements with them? Copy the splint warnings here, and express your
 disagreement after each warning. If there are no warnings, then write
 "None."
 
-
+Hashtable is incomplete, so did not splint.
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on symtablehash.c, and what are your
@@ -70,7 +197,7 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
-
+Hashtable is incomplete, so did not critTer
 
 ------------------------------------------------------------------------
 What are the CPU times reported by testsymtable.c with binding counts
